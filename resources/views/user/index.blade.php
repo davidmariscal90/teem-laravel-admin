@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('title', 'User')
 @section('content')
+<style>
+
+</style>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
         <h2>Users</h2>
@@ -27,40 +30,30 @@
                     </div>
                 </div>
                 <div class="ibox-content " >
-                <div class="table-responsive"> 
-                    <table class="table table-striped table-hover"  id="usertable">
+                <div class=""> 
+                    <table class="table table-bordered dataTable no-footer dtr-inline"  id="usertable">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                 <th>Name</th>
                                 <th>Username</th>
-                                <th>Firstname</th>
-                                <th>Lastname</th>
                                  <th>Email</th>
-                                <!--<th>Profileimage</th>-->
                                 <th>Active</th>
-                                <th>Birthdate</th>
-                                <th>City</th>
-                               <th>Description</th>
-                                <th>sports</th>
                                 <th>ActivateDate</th>
+                                <th>#</th>
+                                <th>#</th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
                         <tfoot>
                         <tr>
-                             <th>#</th>
+                                <th>Name</th>
                                 <th>Username</th>
-                                <th>Firstname</th>
-                                <th>Lastname</th>
                                  <th>Email</th>
-                                <!--<th>Profileimage</th>-->
                                 <th>Active</th>
-                                <th>Birthdate</th>
-                                <th>City</th>
-                               <th>Description</th>
-                                <th>sports</th>
                                 <th>ActivateDate</th>
+                                <th>#</th>
+                                <th>#</th>
                         </tr>
                         </tfoot>
                     </table>
@@ -79,31 +72,53 @@
     $('#usertable').DataTable({
         processing: true,
         serverSide: true,
+        "bStateSave": true,
+        "bRetrieve": true,
+        responsive: true,
        "sAjaxSource": '{!! url('/users/data') !!}',
          "aoColumns": [
              {
                 "mData": null,
-                "sWidth": "10%",
-              "mRender": function (o) {
-                 return "<a href='#' class='edituser' id='edituser' data-id="+o._id+" data-toggle='modal' data-target='#myModalHorizontal' pkuid = "+ o.DT_RowId +" data-toggle='tooltip' title='edit' ><i class='fa fa-edit'></i></a><a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='suspend' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
-              }
-              },
+                
+                "mRender": function (o) {
+                 return o.firstname + " "+o.lastname;
+                }
+              }, 
                {"mData": "username"}, 
-               {"mData": "firstname"}, 
-               {"mData": "lastname"}, 
                {"mData": "email"}, 
-            //    {"mData": "profileimage"}, 
-               {"mData": "isactive"}, 
-               {"mData": "dob"}, 
-               {"mData": "city"}, 
-               {"mData": "description"}, 
-               {"mData":"sports"},
-               {"mData": "activateddate"}, 
+               {
+                "mData": "isactive",
+                "sWidth": "5%",
+                "mRender":function(o){
+                    if(o==true)
+                        return "<i class='fa fa-circle active' aria-hidden='true'></i>";
+                    else
+                        return "<i class='fa fa-circle deactive' aria-hidden='true'></i>";    
+                }
+               }, 
+               {"mData": "activateddate","sWidth": "10%"}, 
+               {
+                "mData": null,
+                "sWidth": "5%",
+                "mRender": function (o) {
+                 return "<a href='user/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
+                }
+              }, 
+               {
+                "mData": null,
+                "sWidth": "5%",
+                "bSearchable":false,
+                "mRender": function (o) {
+                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='admindelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
+                }
+              }, 
          ],
          "aoColumnDefs": [
-             {"bSortable": false, "aTargets": [0]},
+           {"bSortable": false, "aTargets": [0]},
+           {"bSortable": false, "aTargets": [6]},
+           {"bSortable": false, "aTargets": [5]},
          ],
-           "aaSorting": [[1, "asc"]],
+           "aaSorting": [[2, "asc"]],
     });
 </script>
 @endpush

@@ -29,21 +29,23 @@
                 </div>
                 <div class="ibox-content " >
                 <div class=""> 
-                    <table class="table table-striped table-hover"  id="admintable">
+                    <table class="table table-bordered dataTable no-footer dtr-inline" id="admintable">
                         <thead>
                             <tr>
-                                <th>#</th>
                                 <th>Name</th>
-                                 <th>Email</th>
+                                <th>Email</th>
+                                <th>#</th>
+                                <th>#</th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
                         <tfoot>
                         <tr>
-                                  <th>#</th>
                                 <th>Name</th>
                                  <th>Email</th>
+                                 <th>#</th>
+                                <th>#</th>
                         </tr>
                         </tfoot>
                     </table>
@@ -75,24 +77,33 @@
         "bRedraw": true,
         "bStateSave": true,
         "bRetrieve": true,
+        responsive: true,
        "sAjaxSource": '{!! url('/admin/data') !!}',
          "aoColumns": [
-             {
+             
+               {"mData": "name"}, 
+               {"mData": "email"},
+               {
                 "mData": null,
                 "sWidth": "10%",
-              "mRender": function (o) {
-                  console.log('a',o._id);
-                  
-                 return "<a href='admin/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>&nbsp;<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='admindelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
-              }
-              },
-               {"mData": "name"}, 
-               {"mData": "email"} 
+                "mRender": function (o) {
+                 return "<a href='admin/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
+                }
+              }, 
+               {
+                "mData": null,
+                "sWidth": "10%",
+                "bSearchable":false,
+                "mRender": function (o) {
+                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='admindelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
+                }
+              }, 
          ],
          "aoColumnDefs": [
-             {"bSortable": false, "aTargets": [0]},
+             {"bSortable": false, "aTargets": [2]},
+              {"bSortable": false, "aTargets": [3]},
          ],
-           "aaSorting": [[1, "asc"]],
+           "aaSorting": [[0, "asc"]],
     });
 
      $(document).on('click','#admindelete',function(e){

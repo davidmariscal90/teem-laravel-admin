@@ -186,12 +186,6 @@ class UserController extends Controller
                                     ));
             });
 
-            foreach ($userdetail as $key=>$doc) {
-                $doc['activateddate']=date('m-d-Y', ($doc->activateddate."")/1000);
-                $doc['dob']=date('m-d-Y', ($doc->dob."")/1000);
-                $result[]=$doc;
-            }
-
              foreach ($usercount as $key => $value) {
                 $usercount=$value->count;
             }
@@ -201,9 +195,9 @@ class UserController extends Controller
             "sEcho" => intval($input['sEcho']),
             "iTotalRecords" => $totalCount,
             "iTotalDisplayRecords" => $usercount,
-            "aaData" => $result
+            "aaData" => $userdetail
             );
-
+            //sleep(50);
         return response()->json($output);
 	}
 }

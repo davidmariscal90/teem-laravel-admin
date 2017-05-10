@@ -13,4 +13,11 @@ class User extends Eloquent
 	        'activationlink','dob','city','description','sports','encryptedpassword','activateddate','firstname','lastname'
 	     ];
 	
+ 	protected $hidden = ['encryptedpassword'];	
+    protected $dates = ['activateddate'];
+
+	public function getActivateddateAttribute($value){
+		return date('m-d-Y', strtotime($value));
+	}
+	
 }

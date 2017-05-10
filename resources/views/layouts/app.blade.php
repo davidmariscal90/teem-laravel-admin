@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="{!! asset('css/vendor.css') !!}" />
     <link rel="stylesheet" href="{!! asset('css/app.css') !!}" />
+    <link rel="stylesheet" href="{!! asset('css/teemweb.css') !!}" />
 
      <script>
         window.Laravel = <?php echo json_encode([
