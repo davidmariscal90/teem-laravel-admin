@@ -3,13 +3,13 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
-        <h2>Admin User</h2>
+         <h2>Add Subsport</h2>
         <ol class="breadcrumb">
             <li>
-                <a href="{{ url('/admin') }}">Admin</a>
+                <a href="{{ url('/admin') }}">Subsport</a>
             </li>
             <li class="active">
-                Add Admin User
+                Add Subsport
             </li>
         </ol>
     </div>
@@ -19,19 +19,19 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Add Admin User</h5>
+                   <h5>Add Subsport</h5>
                 </div>
                 <div class="ibox-content " >
-                {{ Form::open(['route' => 'admin.store','class'=>"form-horizontal","name"=>"addadmin"]) }}
+                {{ Form::open(['route' => 'subsport.store','class'=>"form-horizontal","name"=>"addsubsport"]) }}
                     
-                    @include('adminuser/_form')
+                    @include('subsport/_form')
 
                    <div class="form-group">
                             <div class="col-md-6">
                                 <button type="submit" class="btn btn-primary">
                                     Save
                                 </button>
-                                <a href="{{ url('/admin') }}" class="btn btn-primary">
+                                <a href="{{ url('/subsport') }}" class="btn btn-primary">
                                     Back
                                 </a>
                             </div>
@@ -45,30 +45,21 @@
 @endsection
 @push("scripts")
 
-@if(Session::has('addadminerr'))
-    <script> toastrDisplay("error","{{ Session::get('addadmin') }}"); </script>
+@if(Session::has('addsubsporterr'))
+    <script> toastrDisplay("error","{{ Session::get('addsubsporterr') }}"); </script>
 @endif
 
 <script type="text/javascript">
-$("form[name='addadmin']").validate({
+$("form[name='addsubsport']").validate({
              rules: {
-                name:"required",
-                 email:{
-                    required:true,
-                    email:true,
-                },
-                password:"required",
-                confirmpassword:{
-                    equalTo: "#password"
-                }
+                title:"required",
+                value:"required",
+                sportid:"required",
              },
               messages:{
-                name: {required:"Name is required"},
-                email: {
-                            required:"Email is required",
-                            'email': 'Email is not valid'
-                        },
-                password:{required:"Password is reqired"}        
+                title: {required:"Title is required"},
+                value:{required:"Value is reqired"},        
+                sportid:{required:"Sport is reqired"}        
              }
 });
 </script>

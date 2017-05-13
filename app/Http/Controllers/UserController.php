@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Model\User;
+use Session;
+use Redirect;
 
 class UserController extends Controller
 {
@@ -68,7 +70,10 @@ class UserController extends Controller
 	     */
 	    public function edit($id)
 	    {
-		//
+            $userid=new \MongoDB\BSON\ObjectID($id);
+            $user=User::find($userid);
+            $user->toArray();
+            return view('user/edit',compact('user'));
 	    }
 	
 	
@@ -81,7 +86,38 @@ class UserController extends Controller
 	     */
 	    public function update(Request $request, $id)
 	    {
-		//
+             $userid=new \MongoDB\BSON\ObjectID($id);
+        
+            $input=$request->all();
+
+            $user=User::where('email','=',$input['email'])
+                ->orWhere('username','=',$input['username'])
+                ->where('_id','!=',$userid)
+                ->get(); 
+
+            if(count($user)==1){
+                Session::flash('addusererr', 'Email or Username already exists');
+                return Redirect::back();
+
+            }else{
+                
+                 if(isset($input['isactive']) && $input['isactive']==1)
+                        $input['isactive']=true;
+                 else
+                        $input['isactive']=false;
+                
+
+                $userupdate=User::where('_id','=',$userid)
+                                ->update($input);
+
+                if($userupdate){
+                    Session::flash('adduser', 'User Update successful!');
+                    return redirect()->route("user.index");
+                }else{
+                    Session::flash('addusererr', 'User not update');
+                    return Redirect::back();
+                }                       
+            }
 	    }
 	
 	
@@ -91,10 +127,17 @@ class UserController extends Controller
 	     * @param  int  $id
 	     * @return \Illuminate\Http\Response
 	     */
-	    public function destroy($id)
-	    {
-		//
-	    }
+	public function destroy($id)
+	{
+            $userid=new \MongoDB\BSON\ObjectID($id);
+            $user=User::where('_id','=',$userid)->delete();
+            if($user){
+                return response()->json(array('message'=>"User delete successfully "),200);
+            }else{
+                return response()->json(array('message'=>"User not found "),400);
+            }
+	}
+
 	public function userList(Request $request){
 		$input = $request->all();
 
@@ -144,7 +187,7 @@ class UserController extends Controller
                             ),
                         array(
                             'city' =>$regex
-                        ),       
+                        )  
                       );
 
         $userdetail=User::raw(function ($collection) use ($orArr,$sortOrderArray,$iDisplayStart,$iDisplayLength) {
@@ -152,6 +195,7 @@ class UserController extends Controller
                                         array(
                                                 '$match'=>array(
                                                      '$or' => $orArr
+                                                     
                                                  )
                                         ),
 

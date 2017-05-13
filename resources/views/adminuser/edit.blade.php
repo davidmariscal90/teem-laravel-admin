@@ -32,6 +32,9 @@
                                 <button type="submit" class="btn btn-primary">
                                     Save
                                 </button>
+                                <a href="{{ url('/admin') }}" class="btn btn-primary">
+                                    Back
+                                </a>
                             </div>
                         </div> 
                 {{ Form::close() }}

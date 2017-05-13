@@ -2,27 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Sports;
 use Illuminate\Http\Request;
-use App\Model\Admin;
+//use Yajra\Datatables\Facades\Datatables;
 use Session;
 use Redirect;
-use Hash;
 
-class AdminUserController extends Controller
+class SportsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-     public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function index()
     {
-        return view('adminuser/index');
+       return view('sport.index');
     }
 
     /**
@@ -32,7 +27,7 @@ class AdminUserController extends Controller
      */
     public function create()
     {
-        return view('adminuser/add');
+        return view('sport.add');
     }
 
     /**
@@ -43,34 +38,28 @@ class AdminUserController extends Controller
      */
     public function store(Request $request)
     {
-       $this->validate($request, [
-        'email' => 'required|unique:admin|max:255',
-        'name' => 'required',
-        'password'=>'required'
+        $this->validate($request, [
+        'title' => 'required|unique:sport',
+        'imageurl' => 'required',
         ]);
 
-        $request->except('confirmpassword');
         $input=$request->all();
-        
-        $admin=Admin::create( [
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'password' => bcrypt($input['password'])
-            ]);
 
-        if($admin){
-            Session::flash('addadmin', 'Admin create successful!');
-            return redirect()->route("admin.index");
+        $sport=Sports::create($input);
+
+        if($sport){
+            Session::flash('addsport', 'Sport create successful!');
+            return redirect()->route("sport.index");
         }else{
-            Session::flash('addadminerr', 'Admin not create');
-            return redirect()->route("admin/create");
+            Session::flash('addsporterr', 'Sport not create');
+            return redirect()->route("sport.create");
         }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Model\Sports  $sports
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -81,86 +70,73 @@ class AdminUserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Model\Sports  $sports
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        $adminid=new \MongoDB\BSON\ObjectID($id);
-        $adminuser=Admin::find($adminid);
-        $adminuser->toArray();
+         $sportid=new \MongoDB\BSON\ObjectID($id);
+        $sport=Sports::find($sportid);
+        $sport->toArray();
        
-        return view('adminuser/edit',compact('adminuser'));
+        return view('sport/edit',compact('sport'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Model\Sports  $sports
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $adminid=new \MongoDB\BSON\ObjectID($id);
+        $sportid=new \MongoDB\BSON\ObjectID($id);
         
         $input=$request->all();
 
-        $admin=Admin::where('email','=',$input['email'])
-                ->where('_id','!=',$adminid)
+        $sport=Sports::where('title','=',$input['title'])
+                ->where('_id','!=',$sportid)
                 ->get(); 
 
-        if(count($admin)==1){
-                Session::flash('addadminerr', 'Email alreay exist');
+        if(count($sport)==1){
+                Session::flash('addsporterr', 'Sport title already exists');
                 return Redirect::back();
          }else{
+            $sportupdate=Sports::where('_id','=',$sportid)
+                                ->update($input);
 
-            $adminuser=Admin::find($adminid);
-
-            if (Hash::check($input['oldpassword'], $adminuser->password))
-            {
-                $adminuser->name=$input['name'];
-                $adminuser->email=$input['email'];
-                 
-                if(isset($input['password'])){
-                    $adminuser->password=bcrypt($input['password']);
-                 }
-                
-                $adminupdate = $adminuser->save();
-                
-                if($adminupdate){
-                    Session::flash('addadmin', 'Admin Update successful!');
-                    return redirect()->route("admin.index");
+              if($sportupdate){
+                    Session::flash('addsport', 'Sport Update successful!');
+                    return redirect()->route("sport.index");
                 }else{
-                    Session::flash('addadminerr', 'Admin not update');
-                    return Redirect::back();   
-                }
-
-            }else{
-                 Session::flash('addadminerr', 'Old password not match');
-                return Redirect::back();
-            }
+                    Session::flash('addsporterr', 'Sport not update');
+                    return Redirect::back();
+                }                       
          }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Model\Sports  $sports
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-       $adminid=new \MongoDB\BSON\ObjectID($id);
-       $admin=Admin::where('_id','=',$adminid)->delete();
-       if($admin){
-            return response()->json(array('message'=>"Admin delete successfully "),200);
+       $sportid=new \MongoDB\BSON\ObjectID($id);
+       $sport=Sports::where('_id','=',$sportid)->delete();
+       
+       if($sport){
+            return response()->json(array('message'=>"Sport delete successfully "),200);
        }else{
-            return response()->json(array('message'=>"Admin not delete "),400);
+            return response()->json(array('message'=>"Sport not delete "),400);
        }
+
     }
-    public function userList(Request $request){
-		$input = $request->all();
+
+    public function sportList(Request $request){
+         $input = $request->all();
 
         $iColumns = $input['iColumns'];
 
@@ -194,23 +170,23 @@ class AdminUserController extends Controller
         $regex=new \MongoDB\BSON\Regex($searchText, "^i");
 
         $orArr=array(
+                       
                         array(
-                                'name' =>$regex
-                            ),
-                        array(
-                            'email' =>$regex
+                            'title' =>$regex
                         ),       
+                        array(
+                            'imageurl' =>$regex
+                        )       
                       );
 
-        $admindetail=Admin::raw(function ($collection) use ($orArr,$sortOrderArray,$iDisplayStart,$iDisplayLength) {
-                return $collection->aggregate(array(
-                                        array(
+    $sport=Sports::raw(function ($collection) use ($orArr,$sortOrderArray,$iDisplayStart,$iDisplayLength) {
+            return $collection->aggregate(array(
+                                           array(
                                                 '$match'=>array(
                                                      '$or' => $orArr
                                                  )
                                         ),
-
-                                        array(
+                                         array(
                                             '$sort'=>$sortOrderArray
                                         ),
                                         array(
@@ -219,12 +195,10 @@ class AdminUserController extends Controller
                                         array(
                                             '$limit'=>intval($iDisplayLength)
                                             )
+                                ));
+        });
 
-                                    ));
-            });
-
-            //count
-             $usercount=Admin::raw(function ($collection) use ($orArr) {
+        $sportcount=Sports::raw(function ($collection) use ($orArr) {
                 return $collection->aggregate(array(
                                         array(
                                                 '$match'=>array(
@@ -242,18 +216,18 @@ class AdminUserController extends Controller
             });
 
          
-             foreach ($usercount as $key => $value) {
-                $usercount=$value->count;
+             foreach ($sportcount as $key => $value) {
+                $sportcount=$value->count;
             }
 
-        $totalCount = Admin::count();
+        $totalCount = Sports::count();
          $output = array(
             "sEcho" => intval($input['sEcho']),
             "iTotalRecords" => $totalCount,
-            "iTotalDisplayRecords" => $usercount,
-            "aaData" => $admindetail
+            "iTotalDisplayRecords" => $sportcount,
+            "aaData" => $sport
             );
+       return response()->json($output);
 
-        return response()->json($output);
-	}
+    }
 }

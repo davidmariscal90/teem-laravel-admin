@@ -7,6 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class User extends Eloquent
 {
+
 	protected $collection = 'user';
 	public $timestamps = false;
 	protected $fillable =['username','email','profileimage','profilethumbimage','isactive','passwordresettoken',

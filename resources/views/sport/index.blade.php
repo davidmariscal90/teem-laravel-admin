@@ -1,16 +1,16 @@
 @extends('layouts.app')
-@section('title', 'Admin')
+@section('title', 'Sport')
 @section('content')
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
-        <h2>Admin User</h2>
+        <h2>Sport</h2>
         <ol class="breadcrumb">
             <li>
                 <a href="{{ url('/') }}">Home</a>
             </li>
             <li class="active">
-                Admin User List
+                Sport List
             </li>
         </ol>
     </div>
@@ -20,20 +20,20 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Admin User</h5>
+                    <h5>Sport</h5>
                     <div class="ibox-tools">
-                        <a id="addUser1" href="{{ url('/admin/create') }}">
+                        <a id="addUser1" href="{{ url('/sport/create') }}">
                             <i class="fa fa-plus"></i>
                         </a>
                     </div>
                 </div>
                 <div class="ibox-content " >
                 <div class=""> 
-                    <table class="table table-bordered dataTable no-footer dtr-inline" id="admintable">
+                    <table class="table table-bordered dataTable no-footer dtr-inline" id="sporttable">
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Email</th>
+                                <th>Image</th>
                                 <th class="actionTag">#</th>
                                 <th class="actionTag">#</th>
                             </tr>
@@ -43,7 +43,7 @@
                         <tfoot>
                         <tr>
                                 <th>Name</th>
-                                 <th>Email</th>
+                                 <th>Image</th>
                                  <th class="actionTag">#</th>
                                 <th class="actionTag">#</th>
                         </tr>
@@ -60,8 +60,8 @@
 
 @push("scripts")
 
-@if(Session::has('addadmin'))
-    <script> toastrDisplay("success","{{ Session::get('addadmin') }}"); </script>
+@if(Session::has('addsport'))
+    <script> toastrDisplay("success","{{ Session::get('addsport') }}"); </script>
 @endif
 
 <script type="text/javascript">
@@ -71,45 +71,43 @@
                     'X-CSRF-TOKEN':window.Laravel.csrfToken
                     }
                 });
-    var adminDataTable = $('#admintable').DataTable({
+    var sportDataTable = $('#sporttable').DataTable({
         processing: true,
         serverSide: true,
         "bRedraw": true,
         "bStateSave": true,
         "bRetrieve": true,
         responsive: true,
-       "sAjaxSource": '{!! url('/admin/data') !!}',
+        "sAjaxSource": '{!! url('/sport/data') !!}',
          "aoColumns": [
-             
-               {"mData": "name"}, 
-               {"mData": "email"},
-               {
+             {"mData": 'title'},
+            {"mData": 'imageurl'},
+            {
                 "mData": null,
-                "sWidth": "10%",
+                "sWidth": "5%",
                 "mRender": function (o) {
-                 return "<a href='admin/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
+                 return "<a href='sport/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
                 }
               }, 
                {
-                "mData": null,
-                "sWidth": "10%",
-                "bSearchable":false,
+              "mData": null,
+                "sWidth": "5%",
                 "mRender": function (o) {
-                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='admindelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
+                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='sportdelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
                 }
               }, 
          ],
-         "aoColumnDefs": [
-             {"bSortable": false, "aTargets": [2]},
-              {"bSortable": false, "aTargets": [3]},
+          "aoColumnDefs": [
+           {"bSortable": false, "aTargets": [3]},
+           {"bSortable": false, "aTargets": [2]}
          ],
            "aaSorting": [[0, "asc"]],
     });
 
-     $(document).on('click','#admindelete',function(e){
-            if(confirm("Are you sure you want to delete this admin?")==true){
+     $(document).on('click','#sportdelete',function(e){
+            if(confirm("Are you sure you want to delete this sport?")==true){
             var id=$(this).data("id");
-            var deleteUrl = '{!!  url('admin')  !!}/'+id
+            var deleteUrl = '{!!  url('sport')  !!}/'+id
                  $.ajax({
             url:deleteUrl,
             type: 'delete',
@@ -117,7 +115,7 @@
             success:function(data){
                 toastrDisplay("success",data['message']);
 
-                adminDataTable.draw(false);
+                sportDataTable.draw(false);
             },
             error:function(err){
                 toastrDisplay("error",err['message']);

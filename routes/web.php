@@ -23,3 +23,15 @@ Route::resource("user",'UserController');
 
 Route::get('/admin/data', 'AdminUserController@userList');
 Route::resource("admin",'AdminUserController');
+
+Route::get('/sport/data', 'SportsController@sportList');
+Route::resource("sport",'SportsController');
+
+Route::get('/subsport/data', 'SubsportsController@subsportList');
+Route::resource("subsport",'SubsportsController');
+
+Route::get('/invitation/data', 'InvitationController@invitationList');
+Route::resource("invitation",'InvitationController');
+
+Route::get('/team/data', 'TeamController@teamList');
+Route::resource("team",'TeamController');

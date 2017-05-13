@@ -39,8 +39,8 @@
                                  <th>Email</th>
                                 <th>Active</th>
                                 <th>ActivateDate</th>
-                                <th>#</th>
-                                <th>#</th>
+                                <th class="actionTag">#</th>
+                                <!--<th class="actionTag">#</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -52,8 +52,8 @@
                                  <th>Email</th>
                                 <th>Active</th>
                                 <th>ActivateDate</th>
-                                <th>#</th>
-                                <th>#</th>
+                                <th class="actionTag">#</th>
+                                <!--<th class="actionTag">#</th> -->
                         </tr>
                         </tfoot>
                     </table>
@@ -67,9 +67,19 @@
 
 
 @push("scripts")
-<script type="text/javascript">
 
-    $('#usertable').DataTable({
+@if(Session::has('adduser'))
+    <script> toastrDisplay("success","{{ Session::get('adduser') }}"); </script>
+@endif
+
+<script type="text/javascript">
+     $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN':window.Laravel.csrfToken
+                    }
+                });
+
+   var userDataTable= $('#usertable').DataTable({
         processing: true,
         serverSide: true,
         "bStateSave": true,
@@ -90,10 +100,11 @@
                 "mData": "isactive",
                 "sWidth": "5%",
                 "mRender":function(o){
+                    console.log(o);
                     if(o==true)
-                        return "<i class='fa fa-circle active' aria-hidden='true'></i>";
+                        return "<i class='fa fa-circle activeaccount actionTag' aria-hidden='true'></i>";
                     else
-                        return "<i class='fa fa-circle deactive' aria-hidden='true'></i>";    
+                        return "<i class='fa fa-circle deactive actionTag' aria-hidden='true'></i>";    
                 }
                }, 
                {"mData": "activateddate","sWidth": "10%"}, 
@@ -104,21 +115,41 @@
                  return "<a href='user/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
                 }
               }, 
-               {
+                /*{
                 "mData": null,
                 "sWidth": "5%",
                 "bSearchable":false,
                 "mRender": function (o) {
-                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='admindelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
+                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='userdelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
                 }
-              }, 
+              }, */ 
          ],
          "aoColumnDefs": [
            {"bSortable": false, "aTargets": [0]},
-           {"bSortable": false, "aTargets": [6]},
+           /*{"bSortable": false, "aTargets": [6]}, */
            {"bSortable": false, "aTargets": [5]},
          ],
            "aaSorting": [[2, "asc"]],
     });
+
+     $(document).on('click','#userdelete',function(e){
+            if(confirm("Are you sure you want to delete this user?")==true){
+            var id=$(this).data("id");
+            var deleteUrl = '{!!  url('user')  !!}/'+id
+                 $.ajax({
+            url:deleteUrl,
+            type: 'delete',
+            dataType: 'json',
+            success:function(data){
+                toastrDisplay("success",data['message']);
+
+                userDataTable.draw(false);
+            },
+            error:function(err){
+                toastrDisplay("error",err['message']);
+            }
+        });
+             }
+        });
 </script>
 @endpush
