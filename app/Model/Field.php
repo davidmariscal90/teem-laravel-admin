@@ -4,18 +4,18 @@ namespace App\Model;
 
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-use App\Observers\SportcenterObserver;
+use App\Observers\FieldObserver;
 
-class Sportcenter extends Eloquent
+class Field extends Eloquent
 {
-    protected $collection = 'sportcenter';
+    protected $collection = 'fields';
 	public $timestamps = false;
 
 	public static function boot(){
 
   		parent::boot();
   		
-  		Sportcenter::observe(new SportcenterObserver());
+  		Field::observe(new FieldObserver());
 		  
   	}
 }

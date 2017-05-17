@@ -30,8 +30,6 @@
 .deactive{
     color:red;
 }
-.table-bordered > thead > tr > th,
-.table-bordered > thead > tr > td {
-  background-color: none !important;
-  border-bottom-width: 1px;
+.cellwidth{
+	width:43%
 }

@@ -16,6 +16,10 @@ class SubsportsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
         return view('subsport.index');
@@ -29,8 +33,8 @@ class SubsportsController extends Controller
     public function create()
     {
         $sport=Sports::all();
-        $sport=$sport->pluck('title','_id');
-        return view('subsport.add',compact('sport'));
+        $sport=$sport->pluck('title', '_id');
+        return view('subsport.add', compact('sport'));
     }
 
     /**
@@ -41,7 +45,7 @@ class SubsportsController extends Controller
      */
     public function store(Request $request)
     {
-         $this->validate($request, [
+        $this->validate($request, [
         'title' => 'required',
         'sportid' => 'required',
         'value' => 'required',
@@ -49,13 +53,14 @@ class SubsportsController extends Controller
 
         $input= $request->except(['_token']);
         $input['sportid']=new \MongoDB\BSON\ObjectID($input['sportid']);
-       
+        $input['value']=(int)$input['value'];
+
         $subsport=Subsport::create($input);
 
-        if($subsport){
+        if ($subsport) {
             Session::flash('addsubsport', 'Subsport create successful!');
             return redirect()->route("subsport.index");
-        }else{
+        } else {
             Session::flash('addsubsporterr', 'Subsport not create');
             return redirect()->route("subsport.create");
         }
@@ -85,9 +90,9 @@ class SubsportsController extends Controller
         $subsport->toArray();
 
         $sport=Sports::all();
-        $sport=$sport->pluck('title','_id');
+        $sport=$sport->pluck('title', '_id');
 
-        return view('subsport.edit',compact('subsport','sport'));
+        return view('subsport.edit', compact('subsport', 'sport'));
     }
 
     /**
@@ -99,21 +104,23 @@ class SubsportsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $input= $request->except(['_token']);
+        $input= $request->except(['_token','_method']);
+        
         $subsportid=new \MongoDB\BSON\ObjectID($id);
-        $input['sportid']=new \MongoDB\BSON\ObjectID($input['sportid']);;
- 
-        $subsportupdate=Subsport::where('_id','=',$subsportid)
+        $input['sportid']=new \MongoDB\BSON\ObjectID($input['sportid']);
+        ;
+        $input['value']=(int)$input['value'];
+
+        $subsportupdate=Subsport::where('_id', '=', $subsportid)
                         ->update($input);
 
-        if($subsportupdate){
+        if ($subsportupdate) {
             Session::flash('addsubsport', 'Subsport Update successful!');
             return redirect()->route("subsport.index");
-        }else{
+        } else {
             Session::flash('addsubsporterr', 'Subsport not update');
             return Redirect::back();
-        }   
-        
+        }
     }
 
     /**
@@ -124,16 +131,17 @@ class SubsportsController extends Controller
      */
     public function destroy($id)
     {
-       $subsportid=new \MongoDB\BSON\ObjectID($id);
-       $subsport=Subsport::where('_id','=',$subsportid)->delete();
-       if($subsport){
-            return response()->json(array('message'=>"Subsport delete successfully "),200);
-       }else{
-            return response()->json(array('message'=>"Subsport not found "),400);
-       }
+        $subsportid=new \MongoDB\BSON\ObjectID($id);
+        $subsport=Subsport::where('_id', '=', $subsportid)->delete();
+        if ($subsport) {
+            return response()->json(array('message'=>"Subsport delete successfully "), 200);
+        } else {
+            return response()->json(array('message'=>"Subsport not found "), 400);
+        }
     }
 
-    public function subsportList(Request $request){
+    public function subsportList(Request $request)
+    {
         $input = $request->all();
 
         $iColumns = $input['iColumns'];
@@ -172,13 +180,13 @@ class SubsportsController extends Controller
                             ),
                         array(
                             'title' =>$regex
-                        ),       
+                        ),
                         array(
                             'value' =>$regex
-                        )       
+                        )
                       );
 
-         $subsport=Subsport::raw(function ($collection) use ($orArr,$sortOrderArray,$iDisplayStart,$iDisplayLength) {
+        $subsport=Subsport::raw(function ($collection) use ($orArr, $sortOrderArray, $iDisplayStart, $iDisplayLength) {
             return $collection->aggregate(array(
                                     array(
                                             '$lookup' => array(
@@ -206,7 +214,7 @@ class SubsportsController extends Controller
         });
 
         $sportcount=Subsport::raw(function ($collection) use ($orArr) {
-                return $collection->aggregate(array(
+            return $collection->aggregate(array(
                                          array(
                                             '$lookup' => array(
                                                 "from" => "sport",
@@ -228,26 +236,26 @@ class SubsportsController extends Controller
                                         )
 
                                     ));
-            });
+        });
 
          
-             foreach ($sportcount as $key => $value) {
-                $sportcount=$value->count;
-            }
+        foreach ($sportcount as $key => $value) {
+            $sportcount=$value->count;
+        }
 
-            foreach($subsport as $spkey=>$spObj){
-                foreach($spObj->sportdetail as $sport ){
-                    $subsport[$spkey]['sportdetail.title']=$sport['title'];
-                }
+        foreach ($subsport as $spkey=>$spObj) {
+            foreach ($spObj->sportdetail as $sport) {
+                $subsport[$spkey]['sportdetail.title']=$sport['title'];
             }
+        }
             
         $totalCount = Subsport::count();
-         $output = array(
+        $output = array(
             "sEcho" => intval($input['sEcho']),
             "iTotalRecords" => $totalCount,
             "iTotalDisplayRecords" => $sportcount,
             "aaData" => $subsport->toArray()
             );
-       return response()->json($output);
+        return response()->json($output);
     }
 }

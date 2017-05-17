@@ -18,7 +18,7 @@ class User extends Eloquent
     protected $dates = ['activateddate'];
 
 	public function getActivateddateAttribute($value){
-		return date('m-d-Y', strtotime($value));
+			return date('m-d-Y', strtotime($value));
 	}
 	
 }

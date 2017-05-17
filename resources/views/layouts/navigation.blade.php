@@ -47,6 +47,12 @@
              <li class="{{ isActiveRoute('team') }}">
                 <a href="{{ url('/team') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Teams</span> </a>
             </li>
+            <li class="{{ isActiveRoute('field') }}">
+                <a href="{{ url('/field') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Pitch & Sportcenter</span> </a>
+            </li>
+			 <li class="{{ isActiveRoute('match') }}">
+                <a href="{{ url('/match') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Match</span> </a>
+            </li>
         </ul>
 
     </div>

@@ -95,7 +95,7 @@
                 "sWidth": "10%",
                 "bSearchable":false,
                 "mRender": function (o) {
-                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='admindelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
+                     return "<a href='javascript:void(0)'  title='Delete' class='edituser' id='admindelete' data-id="+o._id+"  ><i class='fa fa-trash'></i></a>";
                 }
               }, 
          ],

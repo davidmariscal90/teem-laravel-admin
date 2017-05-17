@@ -86,14 +86,14 @@
                 "mData": null,
                 "sWidth": "5%",
                 "mRender": function (o) {
-                 return "<a href='sport/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
+                 return "<a href='sport/"+o._id+"/edit'  id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
                 }
               }, 
                {
               "mData": null,
                 "sWidth": "5%",
                 "mRender": function (o) {
-                     return "<a href='javascript:void(0)' data-toggle='tooltip' title='Deactivated' class='edituser' id='sportdelete' data-id="+o._id+"  pkuid = "+ o.DT_RowId +" ><i class='fa fa-trash'></i></a>";
+                     return "<a href='javascript:void(0)'  title='Delete'  id='sportdelete' data-id="+o._id+"  ><i class='fa fa-trash'></i></a>";
                 }
               }, 
          ],

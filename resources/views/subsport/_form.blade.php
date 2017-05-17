@@ -1,6 +1,6 @@
               <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
+                <label class="col-sm-2 col-sm-2 control-label">Title</label>
                  <div class="col-md-6">
-                <label for="input-one">Title</label>
                 {{ Form::text('title',null,['class'=>'form-control','id'=>'title']) }}
                 @if ($errors->has('title'))
                                     <span class="help-block">
@@ -10,8 +10,8 @@
                 </div>
               </div>
                <div class="form-group{{ $errors->has('value') ? ' has-error' : '' }}">
+                <label class="col-sm-2 col-sm-2 control-label">Value</label>
                <div class="col-md-6">
-                <label for="input-one">Value</label>
                 {{ Form::text('value',null,['class'=>'form-control','id'=>'value']) }}
                  @if ($errors->has('value'))
                                     <span class="help-block">
@@ -21,8 +21,8 @@
                 </div>
               </div>
                <div class="form-group{{ $errors->has('sportid') ? ' has-error' : '' }}">
+                <label class="col-sm-2 col-sm-2 control-label">Sport</label>
                <div class="col-md-6">
-                <label for="input-one">Sport</label>
                 {{ Form::select('sportid', $sport, null, ['placeholder' => 'Select sport...','class'=>'form-control','id'=>'sportid']) }}
                  @if ($errors->has('sportid'))
                                     <span class="help-block">

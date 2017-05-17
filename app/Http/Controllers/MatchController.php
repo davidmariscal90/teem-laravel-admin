@@ -3,23 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Model\Team;
+use App\Model\Match;
 
-class TeamController extends Controller
+class MatchController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct()
-    {
-          $this->middleware('auth');
-
-    } 
     public function index()
     {
-        return view('team.index');
+        return view('match.index');
     }
 
     /**
@@ -85,10 +80,22 @@ class TeamController extends Controller
      */
     public function destroy($id)
     {
-        //
+		 $match=Match::find($id);
+         $response=$match->delete();
+
+        if ($response) {
+            $message="Match delete successfully";
+            $code=200;
+        } else {
+            $message="Someting went wrong try again";
+            $code=400;
+        }
+        
+        return response()->json(array('message'=>$message), $code);
+    
     }
-    public function teamList(Request $request){
-          $input = $request->all();
+	public function matchList(Request $request){
+		 $input = $request->all();
 
         $iColumns = $input['iColumns'];
 
@@ -121,39 +128,32 @@ class TeamController extends Controller
         $regex=new \MongoDB\BSON\Regex($searchText, "^i");
 
         $orArr=array(
-                        array(
-                                'matchdetail.sportcenterdetail.name' =>$regex
+					    array(
+                                'sportcenterdetail.name' =>$regex
                             ),
                         array(
-                            'matchdetail.sportcenterdetail.address' =>$regex
+                            'sportcenterdetail.address' =>$regex
                         ),       
                         array(
                             'userdetail.username' =>$regex
+                        ),
+                        array(
+                            'sportdetail.title' =>$regex
+                        ),
+						array(
+                            'subsportdetail.title' =>$regex
                         )
+				         
                       );
 
-         $team=Team::raw(function ($collection) use ($orArr,$sortOrderArray,$iDisplayStart,$iDisplayLength) {
+         $match=Match::raw(function ($collection) use ($orArr,$sortOrderArray,$iDisplayStart,$iDisplayLength) {
             return $collection->aggregate(array(
-                                    array(
-                                            '$lookup' => array(
-                                                "from" => "match",
-                                                "localField" => "matchid",
-                                                "foreignField" => "_id",
-                                                "as" => "matchdetail"
-                                             )
-                                           ),
-                                    array(
-                                            '$unwind'=>array(
-                                                "path"=>'$matchdetail',
-                                                "preserveNullAndEmptyArrays"=>true
-                                            )
-                                     ),
                                      array(
                                             '$lookup' => array(
                                                 "from" => "sportcenter",
-                                                "localField" => "matchdetail.scid",
+                                                "localField" => "scid",
                                                 "foreignField" => "_id",
-                                                "as" => "matchdetail.sportcenterdetail"
+                                                "as" => "sportcenterdetail"
                                              )
                                            ),
                                       array(
@@ -164,10 +164,33 @@ class TeamController extends Controller
                                                 "as" => "userdetail"
                                              )
                                            ),
+									array(
+                                            '$lookup' => array(
+                                                "from" => "fields",
+                                                "localField" => "fieldid",
+                                                "foreignField" => "_id",
+                                                "as" => "fielddetail"
+                                             )
+                                           ),	   
+									array(
+                                            '$lookup' => array(
+                                                "from" => "sport",
+                                                "localField" => "sport",
+                                                "foreignField" => "_id",
+                                                "as" => "sportdetail"
+                                             )
+                                           ),	   		   
+                                      array(
+                                            '$lookup' => array(
+                                                "from" => "subsport",
+                                                "localField" => "subsportid",
+                                                "foreignField" => "_id",
+                                                "as" => "subsportdetail"
+                                             )
+                                           ),	   		   
                                        array(
                                            '$match'=>array(
                                                  '$or' => $orArr
-                                                 
                                             )
                                         ),
                                        array(
@@ -182,29 +205,14 @@ class TeamController extends Controller
                                 ));
         });
 
-     
-        $teamcount=Team::raw(function ($collection) use ($orArr) {
+        $matchcount=Match::raw(function ($collection) use ($orArr) {
                 return $collection->aggregate(array(
                                          array(
                                             '$lookup' => array(
-                                                "from" => "match",
-                                                "localField" => "matchid",
-                                                "foreignField" => "_id",
-                                                "as" => "matchdetail"
-                                             )
-                                           ),
-                                    array(
-                                            '$unwind'=>array(
-                                                "path"=>'$matchdetail',
-                                                "preserveNullAndEmptyArrays"=>true
-                                            )
-                                     ),
-                                     array(
-                                            '$lookup' => array(
                                                 "from" => "sportcenter",
-                                                "localField" => "matchdetail.scid",
+                                                "localField" => "scid",
                                                 "foreignField" => "_id",
-                                                "as" => "matchdetail.sportcenterdetail"
+                                                "as" => "sportcenterdetail"
                                              )
                                            ),
                                       array(
@@ -214,13 +222,36 @@ class TeamController extends Controller
                                                 "foreignField" => "_id",
                                                 "as" => "userdetail"
                                              )
-                                           ), 
+                                           ),
+									array(
+                                            '$lookup' => array(
+                                                "from" => "fields",
+                                                "localField" => "fieldid",
+                                                "foreignField" => "_id",
+                                                "as" => "fielddetail"
+                                             )
+                                           ),	   
+									array(
+                                            '$lookup' => array(
+                                                "from" => "sport",
+                                                "localField" => "sport",
+                                                "foreignField" => "_id",
+                                                "as" => "sportdetail"
+                                             )
+                                           ),	   		   
                                       array(
+                                            '$lookup' => array(
+                                                "from" => "subsport",
+                                                "localField" => "subsportid",
+                                                "foreignField" => "_id",
+                                                "as" => "subsportdetail"
+                                             )
+                                           ),	   		   
+                                       array(
                                            '$match'=>array(
                                                  '$or' => $orArr
-                                                 
                                             )
-                                        ),               
+                                        ),           
                                       array(
                                         '$group' => array(
                                             '_id' =>null,
@@ -231,34 +262,37 @@ class TeamController extends Controller
                                     ));
             });
 
-            foreach ($teamcount as $key => $value) {
-                $teamcount=$value->count;
+            foreach ($matchcount as $key => $value) {
+                $matchcount=$value->count;
             }
-            //echo '<pre>';
-            foreach($team as $teamkey=>$teamObj){
-                $name=$teamObj['matchdetail']['sportcenterdetail'][0]['name'];
-                $address=$teamObj['matchdetail']['sportcenterdetail'][0]['address'];
-              
-                $team[$teamkey]['matchdetail.sportcenterdetail.name']=$name;
-                $team[$teamkey]['matchdetail.sportcenterdetail.address']=$address;
+            // echo '<pre>';
+			// print_r($match); exit;
+            foreach($match as $matchkey=>$matchiObj){
+                $name=$matchiObj['sportcenterdetail'][0]['name'];
+                $address=$matchiObj['sportcenterdetail'][0]['address'];
+                $date=$matchiObj['matchtime'];
+                $sporttitle=$matchiObj['sportdetail'][0]['title'];
+                $subsporttitle=$matchiObj['subsportdetail'][0]['title'];
+                 
+                $match[$matchkey]['matchtime']=date('m-d-Y',($date."")/1000);
+                $match[$matchkey]['sportcenterdetail.name']=$name;
+                $match[$matchkey]['sportcenterdetail.address']=$address;
+                $match[$matchkey]['sportdetail.title']=$sporttitle;
+                $match[$matchkey]['subsportdetail.title']=$subsporttitle;
                 
-                foreach($teamObj->userdetail as $suser){
-                     $team[$teamkey]['userdetail.username']=$suser['username'];
+                foreach($matchiObj->userdetail as $suser){
+                     $match[$matchkey]['userdetail.username']=$suser['username'];
                 }
-
-                if($teamObj['teamid']==1)
-                    $team[$teamkey]['teamid']="RED ARROWS";
-                else 
-                    $team[$teamkey]['teamid']="BLUE ARROWS";    
+           
             }
             
-        $totalCount = Team::count();
+        $totalCount = Match::count();
          $output = array(
             "sEcho" => intval($input['sEcho']),
             "iTotalRecords" => $totalCount,
-            "iTotalDisplayRecords" => $teamcount,
-            "aaData" => $team->toArray()
+            "iTotalDisplayRecords" => $matchcount,
+            "aaData" => $match->toArray()
             );
        return response()->json($output);
-    }
+	}
 }

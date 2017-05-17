@@ -24,9 +24,9 @@
                 <div class="ibox-title">
                     <h5>Users</h5>
                     <div class="ibox-tools">
-                        <a id="addUser1" href="#">
+                        {{-- <a id="addUser1" href="#">
                             <i class="fa fa-plus"></i>
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
                 <div class="ibox-content " >
@@ -100,19 +100,26 @@
                 "mData": "isactive",
                 "sWidth": "5%",
                 "mRender":function(o){
-                    console.log(o);
                     if(o==true)
                         return "<i class='fa fa-circle activeaccount actionTag' aria-hidden='true'></i>";
                     else
                         return "<i class='fa fa-circle deactive actionTag' aria-hidden='true'></i>";    
                 }
                }, 
-               {"mData": "activateddate","sWidth": "10%"}, 
+               {"mData": "activateddate","sWidth": "10%",
+                    "mRender": function (o) {
+                        if(typeof o=="undefined")
+                            return "";
+                        else 
+                            return o;   
+                    }
+               }, 
                {
                 "mData": null,
                 "sWidth": "5%",
                 "mRender": function (o) {
-                 return "<a href='user/"+o._id+"/edit' class='edituser' id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
+                    
+                 return "<a href='user/"+o._id+"/edit'  id='edituser' title='edit' ><i class='fa fa-edit'></i></a>";
                 }
               }, 
                 /*{

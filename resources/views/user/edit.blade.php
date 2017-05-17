@@ -28,12 +28,12 @@
                     @include('user/_form')
 
                    <div class="form-group">
-                            <div class="col-md-6">
+                            <div class="col-sm-offset-2">
                                 <button type="submit" class="btn btn-primary">
                                     Save
                                 </button>
-                                <a href="{{ url('/user') }}" class="btn btn-primary">
-                                    Back
+                                <a href="{{ url('/user') }}" class="btn btn-danger">
+                                    Cancel
                                 </a>
                             </div>
                         </div> 
@@ -61,10 +61,10 @@ $("form[name='edituser']").validate({
              },
               messages:{
                 firstname: {required:"Firstname is required"},
-                lastname:{required:"Lastname url is reqired"},        
-                email:{required:"Email url is reqired"},        
-                city:{required:"City url is reqired"},        
-                description:{required:"Description url is reqired"}        
+                lastname:{required:"Lastname  is reqired"},        
+                email:{required:"Email  is reqired"},        
+                city:{required:"City  is reqired"},        
+                description:{required:"Description  is reqired"}        
              }
 });
 </script>

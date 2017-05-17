@@ -1,15 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Sport')
+@section('title', 'Main page')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
-        <h2>Edit Subsport</h2>
+        <h2>Sport</h2>
         <ol class="breadcrumb">
             <li>
-                <a href="{{ url('/admin') }}">Subsport</a>
+                <a href="{{ url('/sport') }}">Sport</a>
             </li>
             <li class="active">
-                Edit Subsport
+                Add Sport
             </li>
         </ol>
     </div>
@@ -19,21 +19,20 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Edit Subsport</h5>
+                    <h5>Add Sport</h5>
                 </div>
-                <div class="ibox-content">
-                
-                {{  Form::model($subsport, ['method' => 'PATCH','route' => ['subsport.update', $subsport->_id],'class'=>"form-horizontal","name"=>"editsubsport"]) }}
+                <div class="ibox-content " >
+                {{ Form::open(['route' => 'sport.store','class'=>"form-horizontal","name"=>"addsport"]) }}
                     
-                    @include('subsport/_form')
+                    @include('sport/_form')
 
                    <div class="form-group">
-                            <div class="col-sm-offset-2">
+                            <div class="col-md-6">
                                 <button type="submit" class="btn btn-primary">
                                     Save
                                 </button>
-                                <a href="{{ url('/subsport') }}" class="btn btn-danger">
-                                    Cancel
+                                <a href="{{ url('/sport') }}" class="btn btn-primary">
+                                    Back
                                 </a>
                             </div>
                         </div> 
@@ -46,21 +45,19 @@
 @endsection
 @push("scripts")
 
-@if(Session::has('addsubsporterr'))
-    <script> toastrDisplay("error","{{ Session::get('addsubsporterr') }}"); </script>
+@if(Session::has('addsporterr'))
+    <script> toastrDisplay("error","{{ Session::get('addsporterr') }}"); </script>
 @endif
 
 <script type="text/javascript">
-$("form[name='editsubsport']").validate({
-            rules: {
+$("form[name='addsport']").validate({
+             rules: {
                 title:"required",
-                value:"required",
-                sportid:"required",
+                imageurl:"required",
              },
               messages:{
                 title: {required:"Title is required"},
-                value:{required:"Value is reqired"},        
-                sportid:{required:"Sport is reqired"}        
+                imageurl:{required:"Image url is reqired"}        
              }
 });
 </script>

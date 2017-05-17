@@ -11,15 +11,19 @@ class UserMail extends Mailable
 {
     use Queueable, SerializesModels;
    
-    public $user,$match,$type;
+    public $user,$match,$type, $subj;
     public function __construct($user,$match,$type)
     {
         $this->user=$user;
         $this->match=$match;
-        if($type=="prematchsuccess")
+        if($type=="prematchsuccess") {
             $this->type=$type;
-        else if($type=="prematchcancel")    
+			$this->subj = "Match Scheduled Notification";
+		}
+        else if($type=="prematchcancel") {
             $this->type=$type;
+			$this->subj = "Match Canceled Notification";
+		}
     }   
 
     /**
@@ -29,8 +33,9 @@ class UserMail extends Mailable
      */
     public function build()
     {
-        file_put_contents('/var/www/html/TeemLaravel/readme.txt',$this->match->sportcenter['name'],FILE_APPEND);
+        //file_put_contents('/var/www/html/TeemLaravel/readme.txt',$this->match->sportcenter['name'],FILE_APPEND);
         return $this->view('emails.'.$this->type)
+				->subject($this->subj)
                 ->with(['username' => $this->user['username']])
                 ->with(['matchname' => $this->match->sportcenter['name']])
                 ->with(['matchaddress' => $this->match->sportcenter['address']]);

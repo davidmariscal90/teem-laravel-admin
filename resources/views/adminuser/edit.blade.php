@@ -28,12 +28,12 @@
                     @include('adminuser/_form')
 
                    <div class="form-group">
-                            <div class="col-md-6">
+                            <div class="col-sm-offset-2">
                                 <button type="submit" class="btn btn-primary">
                                     Save
                                 </button>
-                                <a href="{{ url('/admin') }}" class="btn btn-primary">
-                                    Back
+                                <a href="{{ url('/admin') }}" class="btn btn-danger">
+                                    Cancel
                                 </a>
                             </div>
                         </div> 

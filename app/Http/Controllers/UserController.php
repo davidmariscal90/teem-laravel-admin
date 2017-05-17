@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Model\User;
 use Session;
 use Redirect;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -101,12 +102,14 @@ class UserController extends Controller
 
             }else{
                 
-                 if(isset($input['isactive']) && $input['isactive']==1)
+                 if(isset($input['isactive']) && $input['isactive']==1){
+                        $date = Carbon::now();
+                        $date=new \MongoDB\BSON\UTCDateTime($date->timestamp *1000);
                         $input['isactive']=true;
-                 else
+                        $input['activateddate']=$date;
+                 }else
                         $input['isactive']=false;
-                
-
+               
                 $userupdate=User::where('_id','=',$userid)
                                 ->update($input);
 
@@ -164,7 +167,6 @@ class UserController extends Controller
                 }
             }
         }
-
         
         $iDisplayLength=$input['iDisplayLength'];
 
@@ -195,10 +197,8 @@ class UserController extends Controller
                                         array(
                                                 '$match'=>array(
                                                      '$or' => $orArr
-                                                     
                                                  )
                                         ),
-
                                         array(
                                             '$sort'=>$sortOrderArray
                                         ),
@@ -232,8 +232,8 @@ class UserController extends Controller
 
              foreach ($usercount as $key => $value) {
                 $usercount=$value->count;
-            }
-
+             }
+           
         $totalCount = User::count();
          $output = array(
             "sEcho" => intval($input['sEcho']),

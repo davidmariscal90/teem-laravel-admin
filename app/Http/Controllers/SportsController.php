@@ -15,6 +15,11 @@ class SportsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     public function __construct()
+     {
+          $this->middleware('auth');
+
+     }  
     public function index()
     {
        return view('sport.index');
@@ -93,7 +98,7 @@ class SportsController extends Controller
     {
         $sportid=new \MongoDB\BSON\ObjectID($id);
         
-        $input=$request->all();
+        $input=$request->except(['_method','_token']);
 
         $sport=Sports::where('title','=',$input['title'])
                 ->where('_id','!=',$sportid)

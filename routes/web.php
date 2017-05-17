@@ -35,3 +35,11 @@ Route::resource("invitation",'InvitationController');
 
 Route::get('/team/data', 'TeamController@teamList');
 Route::resource("team",'TeamController');
+
+Route::get('/field/data', 'FieldController@fieldList');
+Route::get('/field/sportcenter/data', 'FieldController@sportcenterList');
+Route::delete('/field/sportcenter/destroy/{id}', 'FieldController@sportcenterDestroy');
+Route::resource("field",'FieldController');
+
+Route::get('/match/data', 'MatchController@matchList');
+Route::resource('match','MatchController');

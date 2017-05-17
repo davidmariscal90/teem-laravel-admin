@@ -1,6 +1,7 @@
               <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                 <div class="col-md-6">
-                <label for="input-one">Name</label>
+                
+                <label class="col-sm-2 col-sm-2 control-label">Name</label>
+				 <div class="col-sm-6">
                 {{ Form::text('name',null,['class'=>'form-control','id'=>'name']) }}
                 @if ($errors->has('name'))
                                     <span class="help-block">
@@ -10,8 +11,8 @@
                 </div>
               </div>
                <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                <label class="col-sm-2 col-sm-2 control-label">Email</label>
                <div class="col-md-6">
-                <label for="input-one">Email</label>
                 {{ Form::email('email',null,['class'=>'form-control','id'=>'email']) }}
                  @if ($errors->has('email'))
                                     <span class="help-block">
@@ -22,8 +23,8 @@
               </div>
               @if(isset($adminuser->_id))
               <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                <label class="col-sm-2 col-sm-2 control-label">Old Password</label>
               <div class="col-md-6">
-                <label for="input-one">Old Password</label>
                {{ Form::password('oldpassword', ['class' => 'form-control','id'=>'password']) }}
                  @if ($errors->has('oldpassword'))
                                     <span class="help-block">
@@ -34,8 +35,8 @@
               </div>
               @endif
               <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                @if(isset($adminuser->_id)) <label class="col-sm-2 col-sm-2 control-label">New Password</label> @else <label class="col-sm-2 col-sm-2 control-label">Password</label> @endif
               <div class="col-md-6">
-                @if(isset($adminuser->_id)) <label for="input-one">New Password</label> @else <label for="input-one">Password</label> @endif
                {{ Form::password('password', ['class' => 'form-control','id'=>'password']) }}
                  @if ($errors->has('password'))
                                     <span class="help-block">
@@ -46,8 +47,8 @@
               </div>
               @if(!isset($adminuser->_id))
               <div class="form-group{{ $errors->has('confirmpassword') ? ' has-error' : '' }}">
+                <label class="col-sm-2 col-sm-2 control-label">Confirm Password</label>
               <div class="col-md-6">
-                <label for="input-one">Confirm Password</label>
                {{ Form::password('confirmpassword', ['class' => 'form-control','id'=>'confirmpassword']) }}
               </div>  
               </div>

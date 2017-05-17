@@ -105,7 +105,7 @@ class AdminUserController extends Controller
         $adminid=new \MongoDB\BSON\ObjectID($id);
         
         $input=$request->all();
-
+	
         $admin=Admin::where('email','=',$input['email'])
                 ->where('_id','!=',$adminid)
                 ->get(); 
@@ -117,14 +117,20 @@ class AdminUserController extends Controller
 
             $adminuser=Admin::find($adminid);
 
-            if (Hash::check($input['oldpassword'], $adminuser->password))
-            {
+			if(isset($input['oldpassword']) && $input['oldpassword']!=""){
+				if (Hash::check($input['oldpassword'], $adminuser->password))
+				{
+					if(isset($input['password']) && $input['password']!=""){
+						$adminuser->password=bcrypt($input['password']);
+					}
+				}
+				else{
+                 	Session::flash('addadminerr', 'Old password not match');
+                	return Redirect::back();
+            	}
+			}
                 $adminuser->name=$input['name'];
                 $adminuser->email=$input['email'];
-                 
-                if(isset($input['password'])){
-                    $adminuser->password=bcrypt($input['password']);
-                 }
                 
                 $adminupdate = $adminuser->save();
                 
@@ -135,12 +141,7 @@ class AdminUserController extends Controller
                     Session::flash('addadminerr', 'Admin not update');
                     return Redirect::back();   
                 }
-
-            }else{
-                 Session::flash('addadminerr', 'Old password not match');
-                return Redirect::back();
-            }
-         }
+	     }
     }
 
     /**
