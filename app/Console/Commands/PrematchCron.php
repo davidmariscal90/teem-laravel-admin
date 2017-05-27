@@ -9,6 +9,7 @@ use App\Model\Subsport;
 use Carbon\Carbon;
 use Mail;
 use App\Mail\UserMail;
+use App\Model\Activity;
 
 class PrematchCron extends Command
 {
@@ -24,16 +25,17 @@ class PrematchCron extends Command
     public function handle()
     {
         // 		adding 3 hours to current time
+        
+        $now = Carbon::now('UTC');
+        $now = new \MongoDB\BSON\UTCDateTime($now->timestamp *1000);
+
         $timestamp = Carbon::now('UTC')->addHours(3);
         $timestamp = new \MongoDB\BSON\UTCDateTime($timestamp->timestamp *1000);
         
         $matchArray = Match::where('matchtime', '<=', $timestamp)
                                      ->where('isprematch', '=', false)
                                      ->get();
-        
-        // echo "\n";print_r($matchArray);echo "\n";
-        // exit();
-
+      
         // 		loop for all matches and team
         foreach ($matchArray as $matchId=>$objMatch) {
             $matchid = new \MongoDB\BSON\ObjectID($objMatch['_id']);
@@ -69,6 +71,45 @@ class PrematchCron extends Command
                 $objMatch->isprematch=true;
                 $objMatch->iscancelmatch=true;
                 $objMatch->save();
+
+                $userid=new \MongoDB\BSON\ObjectID($objMatch['userid']);
+
+                $actArr=array();
+                $actArr['userid']=$userid;
+                $actArr['activitydate']=$now;
+                $actArr['activitytype']='canceled';
+                $actArr['onitem']='match';
+                $actArr['onactivityid']=$objMatch['_id'];
+                
+                Activity::create($actArr);
+            }
+        }
+
+        $matchComplete = Match::where('matchtime', '<=', $now)
+								->where('iscancelmatch','=',false)
+								->where('iscompletedmatch','=',false)
+								->where('isprematch', '=', true)
+								->get();
+
+		//print_r($matchComplete);
+      
+        if (count($matchComplete)>0) {
+            foreach ($matchComplete as $matchCompKey=>$matchComObj) {
+                $userid=new \MongoDB\BSON\ObjectID($matchComObj['userid']);
+
+                $activityArr=array();
+                $activityArr['userid']=$userid;
+                $activityArr['activitydate']=$now;
+                $activityArr['activitytype']='completed';
+                $activityArr['onitem']='match';
+                $activityArr['onactivityid']=$matchComObj['_id'];
+                
+                $activity=Activity::create($activityArr);
+
+				if($activity){
+					$matchComObj->iscompletedmatch=true;
+					$matchComObj->save();
+				}
             }
         }
     }

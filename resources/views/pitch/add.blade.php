@@ -1,15 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Edit pitch')
+@section('title', 'Main page')
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
         <h2>Pitch</h2>
         <ol class="breadcrumb">
             <li>
-                <a href="{{ url('/field') }}">Pitch</a>
+                <a href="{{ url('/pitch') }}">Pitch</a>
             </li>
             <li class="active">
-                Edit Pitch
+                Add Pitch
             </li>
         </ol>
     </div>
@@ -19,20 +19,20 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Edit Pitch</h5>
+                    <h5>Add Pitch</h5>
                 </div>
                 <div class="ibox-content " >
-                {{ Form::model($field,['method' => 'PATCH','route' => ['field.update', $field->_id],'class'=>"form-horizontal","name"=>"editpitch"]) }}
+                {{ Form::open(['route' => 'pitch.store','class'=>"form-horizontal","name"=>"addsport"]) }}
                     
-                    @include('field/_formfield')
+                    @include('pitch/_form')
 
                    <div class="form-group">
                             <div class="col-md-6 col-md-offset-2">
                                 <button type="submit" class="btn btn-primary">
                                     Save
                                 </button>
-                                <a href="{{ url('/field') }}" class="btn btn-danger">
-                                    Cancel
+                                <a href="{{ url('/pitch') }}" class="btn btn-danger">
+                                    Back
                                 </a>
                             </div>
                         </div> 
@@ -45,8 +45,8 @@
 @endsection
 @push("scripts")
 
-@if(Session::has('pitcherr'))
-    <script> toastrDisplay("error","{{ Session::get('pitcherr') }}"); </script>
+@if(Session::has('addsporterr'))
+    <script> toastrDisplay("error","{{ Session::get('addsporterr') }}"); </script>
 @endif
 
 <script type="text/javascript">
@@ -55,7 +55,6 @@ $(document).ready(function () {
                     checkboxClass: 'icheckbox_square-green',
                     radioClass: 'iradio_square-green',
                 });
-
 				$('#addMore').click(function(){
 					var wrapper = $("#select-wrapper").clone().appendTo("#sportsSelect");
 					var btnminus = wrapper.find(".addMore").remove();
@@ -67,13 +66,10 @@ $(document).ready(function () {
 					var selectWrapper = $(md2).parent();
 					selectWrapper.remove();
 				});
-
-
             });
-
-	$("form[name='editpitch']").validate({
+$("form[name='addsport']").validate({
              rules: {
-                sportcenter:"required",
+                scid:"required",
                 name:"required",
                 covering:"required",
                 lights:"required",
@@ -82,7 +78,7 @@ $(document).ready(function () {
                 price:"required",
              },
               messages:{
-				sportcenter: {required:"Sport Centre is required"},
+				scid: {required:"Sport Centre is required"},
                 name: {required:"Name is required"},
                 covering:{required:"Covering is reqired"},    
                 lights:{required:"Lights is reqired"},
@@ -90,8 +86,7 @@ $(document).ready(function () {
                 sport:{required:"Sport is reqired"},
                 price:{required:"Price is reqired"}
              }
-	});
-
+});
 </script>
 @endpush
 

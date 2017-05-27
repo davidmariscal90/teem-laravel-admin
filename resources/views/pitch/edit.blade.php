@@ -22,16 +22,16 @@
                     <h5>Edit Pitch</h5>
                 </div>
                 <div class="ibox-content " >
-                {{ Form::model($field,['method' => 'PATCH','route' => ['field.update', $field->_id],'class'=>"form-horizontal","name"=>"editpitch"]) }}
+                {{ Form::model($field,['method' => 'PATCH','route' => ['pitch.update', $field->_id],'class'=>"form-horizontal","name"=>"editpitch"]) }}
                     
-                    @include('field/_formfield')
+                    @include('pitch/_form')
 
                    <div class="form-group">
                             <div class="col-md-6 col-md-offset-2">
                                 <button type="submit" class="btn btn-primary">
                                     Save
                                 </button>
-                                <a href="{{ url('/field') }}" class="btn btn-danger">
+                                <a href="{{ url('/pitch') }}" class="btn btn-danger">
                                     Cancel
                                 </a>
                             </div>

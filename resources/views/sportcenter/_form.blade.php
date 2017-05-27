@@ -34,20 +34,6 @@
                                 @endif
                             </div>
               </div>
-			  <div class="form-group{{ $errors->has('city') ? ' has-error' : '' }}">
-                              <label class="col-sm-2 col-sm-3 control-label">Review</label>     
-                            <div class="col-md-6">
-                        <div class="switch">
-                                <div class="onoffswitch">
-                                {{  Form::checkbox('isreviewed', true, null,['class'=>'onoffswitch-checkbox','id'=>'example1']) }}
-                                    <label class="onoffswitch-label" for="example1">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            </div>
-                     </div>   
 			  <div class="form-group{{ $errors->has('address') ? ' has-error' : '' }}">
                             <label class="col-sm-2 col-sm-2 control-label">Address</label>
                             <div class="col-md-6">

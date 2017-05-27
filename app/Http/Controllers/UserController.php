@@ -244,4 +244,10 @@ class UserController extends Controller
             //sleep(50);
         return response()->json($output);
 	}
+
+	public function viewUser(Request $request, $id) {
+		$userDetails = User::where('_id', '=', $id)->get();
+		// print_r($userDetails);
+		return view("user/view",compact('userDetails'));
+	}
 }
